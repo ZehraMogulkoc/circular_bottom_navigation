@@ -113,7 +113,7 @@ class _CircularBottomNavigationState extends State<CircularBottomNavigation> wit
     double maxShadowHeight = (widget.backgroundBoxShadow ?? []).isNotEmpty
         ? widget.backgroundBoxShadow!.map((e) => e.blurRadius).reduce(max)
         : 0.0;
-    double fullWidth = MediaQuery.of(context).size.width;
+    double fullWidth = MediaQuery.of(context).size.width-500;
     double fullHeight = widget.barHeight + (widget.circleSize / 2) + widget.circleStrokeWidth + maxShadowHeight;
     double sectionsWidth = fullWidth / widget.tabItems.length;
 
