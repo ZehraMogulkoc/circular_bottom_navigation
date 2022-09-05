@@ -12,6 +12,7 @@ class CircularBottomNavigation extends StatefulWidget {
   final List<TabItem> tabItems;
   final int selectedPos;
   final double barHeight;
+  final double? barWidth;
   final Color barBackgroundColor;
   final double circleSize;
   final double circleStrokeWidth;
@@ -27,6 +28,7 @@ class CircularBottomNavigation extends StatefulWidget {
     this.tabItems, {
     this.selectedPos = 0,
     this.barHeight = 60,
+    this.barWidth = 0,
     this.barBackgroundColor = Colors.white,
     this.circleSize = 58,
     this.circleStrokeWidth = 4,
@@ -37,14 +39,16 @@ class CircularBottomNavigation extends StatefulWidget {
     this.selectedCallback,
     this.controller,
     backgroundBoxShadow,
-  })  : backgroundBoxShadow = backgroundBoxShadow ?? [BoxShadow(color: Colors.grey, blurRadius: 2.0)],
+  })  : backgroundBoxShadow = backgroundBoxShadow ??
+            [BoxShadow(color: Colors.grey, blurRadius: 2.0)],
         assert(tabItems.length != 0, "tabItems is required");
 
   @override
   State<StatefulWidget> createState() => _CircularBottomNavigationState();
 }
 
-class _CircularBottomNavigationState extends State<CircularBottomNavigation> with TickerProviderStateMixin {
+class _CircularBottomNavigationState extends State<CircularBottomNavigation>
+    with TickerProviderStateMixin {
   Curve _animationsCurve = Cubic(0.27, 1.21, .77, 1.09);
 
   late AnimationController itemsController;
@@ -75,12 +79,14 @@ class _CircularBottomNavigationState extends State<CircularBottomNavigation> wit
       return selectedPos == index ? 1.0 : 0.0;
     });
 
-    itemsController = AnimationController(vsync: this, duration: widget.animationDuration);
+    itemsController =
+        AnimationController(vsync: this, duration: widget.animationDuration);
     itemsController.addListener(() {
       setState(() {
         _itemsSelectedState.asMap().forEach((i, value) {
           if (i == previousSelectedPos) {
-            _itemsSelectedState[previousSelectedPos!] = 1.0 - itemsAnimation.value;
+            _itemsSelectedState[previousSelectedPos!] =
+                1.0 - itemsAnimation.value;
           } else if (i == selectedPos) {
             _itemsSelectedState[selectedPos!] = itemsAnimation.value;
           } else {
@@ -90,14 +96,16 @@ class _CircularBottomNavigationState extends State<CircularBottomNavigation> wit
       });
     });
 
-    selectedPosAnimation = makeSelectedPosAnimation(selectedPos!.toDouble(), selectedPos!.toDouble());
+    selectedPosAnimation = makeSelectedPosAnimation(
+        selectedPos!.toDouble(), selectedPos!.toDouble());
 
-    itemsAnimation =
-        Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: itemsController, curve: _animationsCurve));
+    itemsAnimation = Tween(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: itemsController, curve: _animationsCurve));
   }
 
   Animation<double> makeSelectedPosAnimation(double begin, double end) {
-    return Tween(begin: begin, end: end).animate(CurvedAnimation(parent: itemsController, curve: _animationsCurve));
+    return Tween(begin: begin, end: end).animate(
+        CurvedAnimation(parent: itemsController, curve: _animationsCurve));
   }
 
   void onSelectedPosAnimate() {
@@ -113,8 +121,11 @@ class _CircularBottomNavigationState extends State<CircularBottomNavigation> wit
     double maxShadowHeight = (widget.backgroundBoxShadow ?? []).isNotEmpty
         ? widget.backgroundBoxShadow!.map((e) => e.blurRadius).reduce(max)
         : 0.0;
-    double fullWidth = MediaQuery.of(context).size.width-500;
-    double fullHeight = widget.barHeight + (widget.circleSize / 2) + widget.circleStrokeWidth + maxShadowHeight;
+    double fullWidth = widget.barWidth ??MediaQuery.of(context).size.width ;
+    double fullHeight = widget.barHeight +
+        (widget.circleSize / 2) +
+        widget.circleStrokeWidth +
+        maxShadowHeight;
     double sectionsWidth = fullWidth / widget.tabItems.length;
 
     //Create the boxes Rect
@@ -193,12 +204,16 @@ class _CircularBottomNavigationState extends State<CircularBottomNavigation> wit
               ),
               Container(
                 margin: EdgeInsets.all(widget.circleStrokeWidth),
-                decoration: BoxDecoration(shape: BoxShape.circle, color: widget.tabItems[selectedPos!].circleColor),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: widget.tabItems[selectedPos!].circleColor),
               ),
             ],
           ),
         ),
-        left: (selectedPosAnimation.value * sectionsWidth) + (sectionsWidth / 2) - (widget.circleSize / 2),
+        left: (selectedPosAnimation.value * sectionsWidth) +
+            (sectionsWidth / 2) -
+            (widget.circleSize / 2),
         top: maxShadowHeight,
       ),
     );
@@ -206,7 +221,9 @@ class _CircularBottomNavigationState extends State<CircularBottomNavigation> wit
     //Here are the Icons and texts of items
     boxes.asMap().forEach((int pos, Rect r) {
       // Icon
-      Color iconColor = pos == selectedPos ? widget.selectedIconColor : widget.normalIconColor;
+      Color iconColor = pos == selectedPos
+          ? widget.selectedIconColor
+          : widget.normalIconColor;
       double scaleFactor = pos == selectedPos ? 1.2 : 1.0;
       children.add(
         Positioned(
@@ -221,7 +238,8 @@ class _CircularBottomNavigationState extends State<CircularBottomNavigation> wit
           left: r.center.dx - (widget.iconsSize / 2),
           top: r.center.dy -
               (widget.iconsSize / 2) -
-              (_itemsSelectedState[pos] * ((widget.barHeight / 2) + widget.circleStrokeWidth)),
+              (_itemsSelectedState[pos] *
+                  ((widget.barHeight / 2) + widget.circleStrokeWidth)),
         ),
       );
 
@@ -280,7 +298,8 @@ class _CircularBottomNavigationState extends State<CircularBottomNavigation> wit
 
     itemsController.forward(from: 0.0);
 
-    selectedPosAnimation = makeSelectedPosAnimation(previousSelectedPos!.toDouble(), selectedPos!.toDouble());
+    selectedPosAnimation = makeSelectedPosAnimation(
+        previousSelectedPos!.toDouble(), selectedPos!.toDouble());
     selectedPosAnimation.addListener(onSelectedPosAnimate);
 
     if (widget.selectedCallback != null) {
