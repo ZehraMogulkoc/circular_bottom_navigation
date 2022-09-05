@@ -28,7 +28,7 @@ class CircularBottomNavigation extends StatefulWidget {
     this.tabItems, {
     this.selectedPos = 0,
     this.barHeight = 60,
-    this.barWidth = 0,
+    this.barWidth,
     this.barBackgroundColor = Colors.white,
     this.circleSize = 58,
     this.circleStrokeWidth = 4,
@@ -121,7 +121,7 @@ class _CircularBottomNavigationState extends State<CircularBottomNavigation>
     double maxShadowHeight = (widget.backgroundBoxShadow ?? []).isNotEmpty
         ? widget.backgroundBoxShadow!.map((e) => e.blurRadius).reduce(max)
         : 0.0;
-    double fullWidth = widget.barWidth ??MediaQuery.of(context).size.width ;
+    double fullWidth = widget.barWidth ?? MediaQuery.of(context).size.width;
     double fullHeight = widget.barHeight +
         (widget.circleSize / 2) +
         widget.circleStrokeWidth +
